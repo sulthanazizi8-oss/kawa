@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stroke Order 川</title>
+
+<style>
+body{
+    margin:0;
+    background:#ffffff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:Arial, sans-serif;
+}
+
+svg{
+    width:320px;
+    height:320px;
+}
+
+path{
+    fill:none;
+    stroke:#000;
+    stroke-width:18;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.number{
+    font-size:22px;
+    font-weight:bold;
+    fill:#000;
+    opacity:0;
+}
+</style>
+</head>
+<body>
+
+<svg viewBox="0 0 200 200">
+
+    <!-- 1. Kiri (natural seperti contoh kamu) -->
+    <path id="s1"
+          d="M75 40
+             C78 70 85 110 65 165" />
+    <text id="n1" class="number"
+          x="55" y="30">1</text>
+
+    <!-- 2. Tengah (lebih pendek & lurus) -->
+    <path id="s2"
+          d="M105 55
+             L105 150" />
+    <text id="n2" class="number"
+          x="95" y="45">2</text>
+
+    <!-- 3. Kanan (paling tinggi & panjang) -->
+    <path id="s3"
+          d="M145 30
+             L145 175" />
+    <text id="n3" class="number"
+          x="135" y="20">3</text>
+
+</svg>
+
+<script>
+const strokes = [
+    { path: document.getElementById("s1"), num: document.getElementById("n1") },
+    { path: document.getElementById("s2"), num: document.getElementById("n2") },
+    { path: document.getElementById("s3"), num: document.getElementById("n3") }
+];
+
+strokes.forEach(s=>{
+    const len = s.path.getTotalLength();
+    s.path.style.strokeDasharray = len;
+    s.path.style.strokeDashoffset = len;
+});
+
+function animateStroke(obj, duration){
+    return new Promise(resolve=>{
+        obj.path.style.transition = `stroke-dashoffset ${duration}ms ease`;
+        obj.path.style.strokeDashoffset = 0;
+        obj.num.style.opacity = 1;
+        setTimeout(resolve, duration);
+    });
+}
+
+function resetStroke(obj){
+    obj.path.style.transition = "none";
+    const len = obj.path.getTotalLength();
+    obj.path.style.strokeDashoffset = len;
+    obj.num.style.opacity = 0;
+}
+
+async function loop(){
+    while(true){
+
+        await animateStroke(strokes[0], 800);
+        await animateStroke(strokes[1], 600);
+        await animateStroke(strokes[2], 900);
+
+        await new Promise(r=>setTimeout(r,700));
+
+        strokes.forEach(resetStroke);
+
+        await new Promise(r=>setTimeout(r,300));
+    }
+}
+
+loop();
+</script>
+
+</body>
+</html>
